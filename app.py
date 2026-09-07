@@ -2,7 +2,7 @@ import os
 import streamlit as st
 from PIL import Image
 
-# Import get_recommendations (wrapped in try-except for robustness)
+# Import get_recommendations wrapped in try-except for robustness)
 try:
     from recommender import get_recommendations
 except ImportError:
