@@ -9,7 +9,14 @@ def load_data():
     return pd.read_csv("movies.csv")
 
 
-def fetch_real_poster(movie_title):
+def get_final_poster(row):
+    # 1. movies.csv-യിൽ നേരിട്ടുള്ള ഇമേജ് ലിങ്ക് (placehold.co അല്ലാത്തത്) ഉണ്ടെങ്കിൽ അത് ഉപയോഗിക്കുക
+    csv_poster = str(row.get("poster_url", "")).strip()
+    if csv_poster.startswith("http") and "placehold.co" not in csv_poster:
+        return csv_poster
+
+    # 2. CSV-യിൽ ഇല്ലെങ്കിൽ OMDb API വഴി നോക്കുക
+    movie_title = row.get("Title", "")
     api_key = "b9a5e69d"
     url = "https://www.omdbapi.com/"
 
@@ -17,7 +24,7 @@ def fetch_real_poster(movie_title):
         response = requests.get(
             url,
             params={"t": movie_title, "apikey": api_key},
-            timeout=10
+            timeout=5
         )
         response.raise_for_status()
         result = response.json()
@@ -27,6 +34,7 @@ def fetch_real_poster(movie_title):
     except Exception:
         pass
 
+    # 3. രണ്ടും ലഭ്യമല്ലെങ്കിൽ മാത്രം പ്ലേസ്‌ഹോൾഡർ നൽകുക
     title_clean = str(movie_title).replace(" ", "+")
     return f"https://placehold.co/300x450/1e293b/38bdf8?text={title_clean}"
 
@@ -62,9 +70,8 @@ def get_recommendations(genre, language, mood, top_n=5):
         recommendations["similarity_score"] * 100
     ).round(2)
 
-    recommendations["poster_url"] = recommendations["Title"].apply(
-        fetch_real_poster
-    )
+    # CSV-യിലെ ലിങ്കിന് മുൻഗണന നൽകിക്കൊണ്ട് പോസ്റ്റർ ലിങ്ക് നിശ്ചയിക്കുന്നു
+    recommendations["poster_url"] = recommendations.apply(get_final_poster, axis=1)
 
     return recommendations[
         ["Title", "genre", "language", "mood", "poster_url", "similarity_score"]
