@@ -2,7 +2,7 @@
 
 A content-based movie recommendation web application built with Streamlit, Scikit-learn, and Pandas. The app recommends films tailored to user preferences across genre, language, and mood using text vectorization and cosine similarity.
 
----test this app Https://task-31-rishan-w3ysekmavebp5sascncegd.streamlit.app/
+---test this app .https://task-3-rishan-ms8stweatkvv6bpfhhxnxa.streamlit.app/
 
 ## 📌 Features
 
