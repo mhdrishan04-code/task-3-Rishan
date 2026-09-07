@@ -2,7 +2,7 @@ import os
 import streamlit as st
 from PIL import Image
 
-# Import get_recommendations wrapped in try-except for robustness)
+# Import get_recommendations (wrapped in try-except for robustness)
 try:
     from recommender import get_recommendations
 except ImportError:
@@ -77,8 +77,8 @@ if get_rec_clicked:
                 with col1:
                     poster = movie.get("poster_url")
                     fallback_poster = "https://placehold.co/300x450/1e293b/38bdf8?text=No+Poster"
-                    
-                    # URL പരിശോധിക്കുകയും എറർ വന്നാൽ തകരാതിരിക്കാൻ try-except നൽകുകയും ചെയ്യുന്നു
+
+                    # Validate URL format and gracefully fall back on loading exceptions
                     if poster and isinstance(poster, str) and poster.strip().startswith("http"):
                         try:
                             st.image(poster.strip(), width=130)
