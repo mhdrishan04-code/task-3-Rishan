@@ -2,8 +2,6 @@ import os
 import streamlit as st
 from PIL import Image
 
-# Poster loading fix deployed; Streamlit Cloud redeploy trigger.
-
 # Import get_recommendations (wrapped in try-except for robustness)
 try:
     from recommender import get_recommendations
@@ -78,8 +76,17 @@ if get_rec_clicked:
                 col1, col2 = st.columns([1, 2.5])
                 with col1:
                     poster = movie.get("poster_url")
-                    if poster and isinstance(poster, str) and poster.strip():
-                        st.image(poster, width=130)
+                    fallback_poster = "https://placehold.co/300x450/1e293b/38bdf8?text=No+Poster"
+                    
+                    # URL പരിശോധിക്കുകയും എറർ വന്നാൽ തകരാതിരിക്കാൻ try-except നൽകുകയും ചെയ്യുന്നു
+                    if poster and isinstance(poster, str) and poster.strip().startswith("http"):
+                        try:
+                            st.image(poster.strip(), width=130)
+                        except Exception:
+                            st.image(fallback_poster, width=130)
+                    else:
+                        st.image(fallback_poster, width=130)
+
                 with col2:
                     movie_title = movie.get(title_col, "Unknown")
                     st.markdown(f'<div class="movie-title">🎬 {movie_title}</div>', unsafe_allow_html=True)
